@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "mr-hops-db"
-database_id = "REEMPLAZAR_CON_TU_D1_DATABASE_ID"
+database_id = "cb6717c0-5ff2-4200-af85-e4305ed3da53"
 
 [[r2_buckets]]
 binding = "IMAGES"
