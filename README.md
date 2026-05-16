@@ -115,7 +115,7 @@ Agregar en Settings → Secrets → Actions:
 | Etapa 3 — API: orders, reservas, admin, R2 | ✅ |
 | Etapa 4 — Frontend: router, layout, age gate, stores | ✅ |
 | Etapa 5 — Frontend: páginas públicas | ✅ |
-| Etapa 6 — Frontend: panel admin | 🚧 En progreso |
+| Etapa 6 — Frontend: panel admin | ✅ |
 
 ## Leyenda legal
 

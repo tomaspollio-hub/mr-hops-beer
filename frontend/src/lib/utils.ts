@@ -1,6 +1,23 @@
 import { clsx, type ClassValue } from 'clsx'
 import { type OrderStatus, type ReservationStatus } from '@/types'
 
+export const ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  pending_confirmation: ['confirmed', 'cancelled'],
+  confirmed:           ['in_preparation', 'cancelled'],
+  in_preparation:      ['ready', 'cancelled'],
+  ready:               ['delivered', 'cancelled'],
+  delivered:           [],
+  cancelled:           [],
+}
+
+export const RESERVATION_TRANSITIONS: Record<ReservationStatus, ReservationStatus[]> = {
+  pending_confirmation: ['confirmed', 'cancelled'],
+  confirmed:            ['barrel_delivered', 'cancelled'],
+  barrel_delivered:     ['barrel_returned'],
+  barrel_returned:      [],
+  cancelled:            [],
+}
+
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs)
 }
