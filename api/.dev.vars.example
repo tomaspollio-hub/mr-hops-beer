@@ -1,0 +1,6 @@
+# Copiar a .dev.vars y completar los valores para desarrollo local
+# NUNCA commitear .dev.vars
+
+JWT_SECRET=tu-secreto-local-muy-largo
+RESEND_API_KEY=re_xxxxxxxxxx
+ADMIN_EMAIL=tu@email.com

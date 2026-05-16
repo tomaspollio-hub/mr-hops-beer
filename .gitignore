@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+.env
+.env.local
+*.local
+
+# Cloudflare
+.mf/
+
+# Editor
+.vscode/
+.idea/
+*.swp

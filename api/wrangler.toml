@@ -1,0 +1,29 @@
+name = "mr-hops-api"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mr-hops-db"
+database_id = "REEMPLAZAR_CON_TU_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "mr-hops-images"
+
+[vars]
+ENVIRONMENT = "production"
+FRONTEND_URL = "https://mrhopsbeer.com.ar"
+R2_PUBLIC_URL = "https://images.mrhopsbeer.com.ar"
+
+[[routes]]
+pattern = "api.mrhopsbeer.com.ar/*"
+zone_name = "mrhopsbeer.com.ar"
+
+# ─── Desarrollo local ──────────────────────────────────────────────────────────
+[env.dev]
+[env.dev.vars]
+ENVIRONMENT = "development"
+FRONTEND_URL = "http://localhost:5173"
+R2_PUBLIC_URL = "http://localhost:8787/images"
