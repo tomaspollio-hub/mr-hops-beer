@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { type Env, type ReservationStatus, RESERVATION_TRANSITIONS } from '@/types'
 import { adminAuthMiddleware } from '@/middleware/adminAuth'
 import { sendEmail, reservationStatusEmailHtml } from '@/services/email'
+import { createCalendarEvent, deleteCalendarEvent } from '@/services/googleCalendar'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -57,13 +58,16 @@ app.patch('/:id/status', async c => {
   }
 
   const fullRes = await c.env.DB.prepare(`
-    SELECT br.*, bv.liters, bv.price_per_day
+    SELECT br.*, bv.liters, bv.price_per_day, p.name as barrel_name
     FROM barrel_reservations br
     JOIN barrel_variants bv ON br.barrel_variant_id = bv.id
+    JOIN products p ON bv.product_id = p.id
     WHERE br.id = ?
   `).bind(c.req.param('id')).first<{
     reservation_number: string; user_id: string | null; guest_name: string; guest_email: string;
-    liters: number; start_date: string; end_date: string; total: number
+    guest_phone: string | null; barrel_name: string; liters: number;
+    start_date: string; end_date: string; total: number; deposit_amount: number;
+    google_event_id: string | null
   }>()
 
   await c.env.DB.batch([
@@ -76,6 +80,7 @@ app.patch('/:id/status', async c => {
   ])
 
   if (fullRes) {
+    // Email notification
     let recipientEmail: string | undefined = fullRes.guest_email || undefined
     let recipientName: string | undefined = fullRes.guest_name || undefined
     if (!recipientEmail && fullRes.user_id) {
@@ -93,6 +98,31 @@ app.patch('/:id/status', async c => {
           html,
         })
       }
+    }
+
+    // Google Calendar sync
+    if (body.status === 'confirmed') {
+      const eventId = await createCalendarEvent(c.env, {
+        reservation_number: fullRes.reservation_number,
+        guest_name: fullRes.guest_name,
+        guest_phone: fullRes.guest_phone,
+        barrel_name: fullRes.barrel_name,
+        liters: fullRes.liters,
+        start_date: fullRes.start_date,
+        end_date: fullRes.end_date,
+        total: fullRes.total,
+        deposit_amount: fullRes.deposit_amount,
+      })
+      if (eventId) {
+        await c.env.DB.prepare(
+          `UPDATE barrel_reservations SET google_event_id = ? WHERE id = ?`,
+        ).bind(eventId, c.req.param('id')).run()
+      }
+    } else if (body.status === 'cancelled' && fullRes.google_event_id) {
+      deleteCalendarEvent(c.env, fullRes.google_event_id).catch(() => {})
+      await c.env.DB.prepare(
+        `UPDATE barrel_reservations SET google_event_id = NULL WHERE id = ?`,
+      ).bind(c.req.param('id')).run()
     }
   }
 

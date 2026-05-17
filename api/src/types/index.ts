@@ -26,6 +26,9 @@ export interface Env {
   ENVIRONMENT: string
   GOOGLE_CLIENT_ID: string
   MERCADOPAGO_ACCESS_TOKEN: string
+  GOOGLE_SA_EMAIL: string
+  GOOGLE_SA_PRIVATE_KEY: string
+  GOOGLE_CALENDAR_ID: string
 }
 
 // Valid status transitions

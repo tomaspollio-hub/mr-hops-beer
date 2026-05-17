@@ -7,6 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "mr-hops-db"
 database_id = "cb6717c0-5ff2-4200-af85-e4305ed3da53"
+migrations_dir = "src/db/migrations"
 
 [[r2_buckets]]
 binding = "IMAGES"
@@ -17,7 +18,11 @@ ENVIRONMENT = "production"
 FRONTEND_URL = "https://mr-hops-beer.pages.dev"
 R2_PUBLIC_URL = "https://pub-01dac17ad1b246a0998ee20e002ea8ad.r2.dev"
 GOOGLE_CLIENT_ID = "153769844353-6petfa2v32aruqb57lnkobp9kn4tkgiv.apps.googleusercontent.com"
-# MERCADOPAGO_ACCESS_TOKEN se configura como secret: wrangler secret put MERCADOPAGO_ACCESS_TOKEN
+# Secrets (configurar con: wrangler secret put <NOMBRE>)
+# MERCADOPAGO_ACCESS_TOKEN
+# GOOGLE_SA_EMAIL          — email de la cuenta de servicio
+# GOOGLE_SA_PRIVATE_KEY    — clave privada PEM de la cuenta de servicio
+# GOOGLE_CALENDAR_ID       — ID del calendario (ej: primary o email del calendario)
 
 # ─── Desarrollo local ──────────────────────────────────────────────────────────
 [env.dev]

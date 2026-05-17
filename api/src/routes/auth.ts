@@ -61,7 +61,9 @@ async function signToken(env: Env, userId: string, role = 'customer', email = ''
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 
 async function checkRateLimit(env: Env, ip: string): Promise<boolean> {
-  const windowStart = new Date(Date.now() - 15 * 60 * 1000).toISOString()
+  // SQLite datetime() stores "YYYY-MM-DD HH:MM:SS" — must compare in same format
+  const windowStart = new Date(Date.now() - 15 * 60 * 1000)
+    .toISOString().replace('T', ' ').slice(0, 19)
   const result = await env.DB.prepare(
     `SELECT COUNT(*) as count FROM login_attempts WHERE ip = ? AND created_at > ?`,
   ).bind(ip, windowStart).first<{ count: number }>()
