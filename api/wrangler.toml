@@ -17,7 +17,7 @@ ENVIRONMENT = "production"
 # Actualizar FRONTEND_URL con la URL de Cloudflare Pages una vez deployado
 FRONTEND_URL = "https://mr-hops-beer.pages.dev"
 # Actualizar R2_PUBLIC_URL con el dominio público del bucket R2
-R2_PUBLIC_URL = "https://pub-REEMPLAZAR.r2.dev"
+R2_PUBLIC_URL = "https://pub-01dac17ad1b246a0998ee20e002ea8ad.r2.dev"
 
 # ─── Desarrollo local ──────────────────────────────────────────────────────────
 [env.dev]
