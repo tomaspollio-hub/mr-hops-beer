@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { type Env, type OrderStatus, ORDER_TRANSITIONS } from '@/types'
 import { adminAuthMiddleware } from '@/middleware/adminAuth'
+import { sendEmail, orderStatusEmailHtml } from '@/services/email'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -69,6 +70,13 @@ app.patch('/:id/status', async c => {
     return c.json({ error: `Transición inválida: ${order.status} → ${body.status}` }, 400)
   }
 
+  const fullOrder = await c.env.DB.prepare(
+    'SELECT * FROM orders WHERE id = ?'
+  ).bind(c.req.param('id')).first<{
+    order_number: string; guest_name: string; guest_email: string;
+    total: number; delivery_type: string; delivery_address: string
+  }>()
+
   await c.env.DB.batch([
     c.env.DB.prepare(`UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?`)
       .bind(body.status, c.req.param('id')),
@@ -76,6 +84,17 @@ app.patch('/:id/status', async c => {
       `INSERT INTO order_status_history (id, order_id, status, note) VALUES (?, ?, ?, ?)`,
     ).bind(crypto.randomUUID(), c.req.param('id'), body.status, body.note ?? null),
   ])
+
+  if (fullOrder?.guest_email) {
+    const html = orderStatusEmailHtml({ ...fullOrder, status: body.status })
+    if (html) {
+      await sendEmail(c.env, {
+        to: fullOrder.guest_email,
+        subject: `Mr. Hops — Pedido ${fullOrder.order_number}`,
+        html,
+      })
+    }
+  }
 
   return c.json({ message: 'Estado actualizado' })
 })

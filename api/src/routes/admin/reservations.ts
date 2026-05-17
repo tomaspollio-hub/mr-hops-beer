@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { type Env, type ReservationStatus, RESERVATION_TRANSITIONS } from '@/types'
 import { adminAuthMiddleware } from '@/middleware/adminAuth'
+import { sendEmail, reservationStatusEmailHtml } from '@/services/email'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -55,6 +56,16 @@ app.patch('/:id/status', async c => {
     return c.json({ error: `Transición inválida: ${res.status} → ${body.status}` }, 400)
   }
 
+  const fullRes = await c.env.DB.prepare(`
+    SELECT br.*, bv.liters, bv.price_per_day
+    FROM barrel_reservations br
+    JOIN barrel_variants bv ON br.barrel_variant_id = bv.id
+    WHERE br.id = ?
+  `).bind(c.req.param('id')).first<{
+    reservation_number: string; guest_name: string; guest_email: string;
+    liters: number; start_date: string; end_date: string; total: number
+  }>()
+
   await c.env.DB.batch([
     c.env.DB.prepare(
       `UPDATE barrel_reservations SET status = ?, updated_at = datetime('now') WHERE id = ?`,
@@ -63,6 +74,17 @@ app.patch('/:id/status', async c => {
       `INSERT INTO reservation_status_history (id, reservation_id, status, note) VALUES (?, ?, ?, ?)`,
     ).bind(crypto.randomUUID(), c.req.param('id'), body.status, body.note ?? null),
   ])
+
+  if (fullRes?.guest_email) {
+    const html = reservationStatusEmailHtml({ ...fullRes, status: body.status })
+    if (html) {
+      await sendEmail(c.env, {
+        to: fullRes.guest_email,
+        subject: `Mr. Hops — Reserva ${fullRes.reservation_number}`,
+        html,
+      })
+    }
+  }
 
   return c.json({ message: 'Estado actualizado' })
 })
