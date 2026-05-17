@@ -16,6 +16,7 @@ const Register               = lazy(() => import('@/pages/public/Register'))
 const MyOrders               = lazy(() => import('@/pages/public/MyOrders'))
 const AgeBlocked             = lazy(() => import('@/pages/public/AgeBlocked'))
 
+const AdminLogin        = lazy(() => import('@/pages/admin/AdminLogin'))
 const AdminDashboard    = lazy(() => import('@/pages/admin/AdminDashboard'))
 const AdminOrders       = lazy(() => import('@/pages/admin/AdminOrders'))
 const AdminOrderDetail  = lazy(() => import('@/pages/admin/AdminOrderDetail'))
@@ -56,6 +57,14 @@ export const router = createBrowserRouter([
       { path: 'registro',                  element: <Register /> },
       { path: 'mis-pedidos',               element: <MyOrders /> },
     ],
+  },
+  {
+    path: '/admin/login',
+    element: (
+      <Suspense fallback={<Loading />}>
+        <AdminLogin />
+      </Suspense>
+    ),
   },
   {
     path: '/admin',

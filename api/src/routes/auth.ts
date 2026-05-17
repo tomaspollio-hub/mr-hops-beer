@@ -13,9 +13,9 @@ async function hashPassword(password: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-async function signToken(env: Env, userId: string): Promise<string> {
+async function signToken(env: Env, userId: string, role = 'customer', email = ''): Promise<string> {
   const secret = new TextEncoder().encode(env.JWT_SECRET)
-  return new SignJWT({ sub: userId })
+  return new SignJWT({ sub: userId, role, email })
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('30d')
     .sign(secret)
@@ -44,7 +44,7 @@ app.post('/register', async c => {
     .bind(id, body.email, body.name, body.phone ?? null, hash)
     .run()
 
-  const token = await signToken(c.env, id)
+  const token = await signToken(c.env, id, 'customer', body.email)
   return c.json({ data: { id, email: body.email, name: body.name, phone: body.phone }, token }, 201)
 })
 
@@ -57,17 +57,17 @@ app.post('/login', async c => {
   }
 
   const user = await c.env.DB.prepare(
-    'SELECT id, email, name, phone, password_hash FROM users WHERE email = ?',
+    'SELECT id, email, name, phone, role, password_hash FROM users WHERE email = ?',
   )
     .bind(body.email)
-    .first<{ id: string; email: string; name: string; phone: string; password_hash: string }>()
+    .first<{ id: string; email: string; name: string; phone: string; role: string; password_hash: string }>()
 
   if (!user) return c.json({ error: 'Credenciales incorrectas' }, 401)
 
   const hash = await hashPassword(body.password)
   if (hash !== user.password_hash) return c.json({ error: 'Credenciales incorrectas' }, 401)
 
-  const token = await signToken(c.env, user.id)
+  const token = await signToken(c.env, user.id, user.role, user.email)
   const { password_hash: _, ...safeUser } = user
   return c.json({ data: safeUser, token })
 })

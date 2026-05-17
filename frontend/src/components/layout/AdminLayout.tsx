@@ -1,5 +1,6 @@
-import { Outlet, NavLink, Link } from 'react-router-dom'
+import { Outlet, NavLink, Link, Navigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/store/authStore'
 
 const adminLinks = [
   { to: '/admin', label: 'Dashboard', end: true },
@@ -11,6 +12,12 @@ const adminLinks = [
 ]
 
 export default function AdminLayout() {
+  const { user } = useAuthStore()
+
+  if (!user || user.role !== 'admin') {
+    return <Navigate to="/admin/login" replace />
+  }
+
   return (
     <div className="min-h-screen flex bg-hops-black">
       {/* Sidebar */}
@@ -36,10 +43,16 @@ export default function AdminLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto">
+        <div className="mt-auto flex flex-col gap-2">
           <Link to="/" className="text-xs text-hops-muted hover:text-hops-white transition-colors">
             ← Ver tienda
           </Link>
+          <button
+            onClick={() => useAuthStore.getState().logout()}
+            className="text-xs text-hops-muted hover:text-red-400 transition-colors text-left"
+          >
+            Cerrar sesión
+          </button>
         </div>
       </aside>
 
