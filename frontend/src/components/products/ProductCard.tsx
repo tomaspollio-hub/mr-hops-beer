@@ -35,18 +35,33 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Info */}
       <div className="flex-1 flex flex-col p-4">
-        <Link to={`/productos/${product.id}`}>
-          <h3 className="font-display text-xl text-hops-white group-hover:text-hops-green transition-colors leading-tight uppercase tracking-wide line-clamp-2">
-            {product.name}
-          </h3>
-        </Link>
+        <div className="flex items-start justify-between gap-2 mb-0.5">
+          <Link to={`/productos/${product.id}`} className="flex-1">
+            <h3 className="font-display text-xl text-hops-white group-hover:text-hops-green transition-colors leading-tight uppercase tracking-wide line-clamp-2">
+              {product.name}
+            </h3>
+          </Link>
+          {product.compare_price && product.compare_price > product.price && (
+            <span className="shrink-0 text-[10px] font-bold bg-red-500 text-white px-1.5 py-0.5 uppercase tracking-wider leading-none">
+              Oferta
+            </span>
+          )}
+        </div>
 
         {product.description && (
           <p className="text-sm text-hops-muted mt-1.5 line-clamp-2 leading-relaxed">{product.description}</p>
         )}
+        {product.sku && (
+          <p className="text-[10px] text-hops-border mt-1 font-mono">SKU: {product.sku}</p>
+        )}
 
         <div className="mt-auto pt-4 flex items-center justify-between gap-2">
-          <span className="font-display text-2xl text-hops-gold tracking-wide">{formatARS(product.price)}</span>
+          <div>
+            {product.compare_price && product.compare_price > product.price && (
+              <span className="text-xs text-hops-muted line-through block leading-none mb-0.5">{formatARS(product.compare_price)}</span>
+            )}
+            <span className="font-display text-2xl text-hops-gold tracking-wide">{formatARS(product.price)}</span>
+          </div>
 
           {product.stock > 0 ? (
             <button

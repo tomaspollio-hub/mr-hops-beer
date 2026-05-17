@@ -106,6 +106,20 @@ export function reservationStatusEmailHtml(res: {
   `)
 }
 
+export function passwordResetEmailHtml(name: string, resetLink: string): string {
+  return baseHtml('Recuperar contraseña', `
+    <p>Hola <strong>${name}</strong>,</p>
+    <p>Recibiste este email porque solicitaste restablecer tu contraseña en Mr. Hops Beer.</p>
+    <p style="margin:24px 0">
+      <a href="${resetLink}"
+         style="display:inline-block;background:#7EC825;color:#0a0a0a;font-weight:bold;padding:12px 24px;text-decoration:none;font-size:14px;letter-spacing:0.05em">
+        RESTABLECER CONTRASEÑA
+      </a>
+    </p>
+    <p style="color:#888;font-size:12px">Este enlace expira en 1 hora. Si no solicitaste este cambio, podés ignorar este email.</p>
+  `)
+}
+
 export function welcomeEmailHtml(name: string): string {
   return baseHtml('¡Bienvenido a Mr. Hops Beer!', `
     <p>Hola <strong>${name}</strong>, gracias por registrarte.</p>

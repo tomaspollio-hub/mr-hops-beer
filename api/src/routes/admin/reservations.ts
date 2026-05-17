@@ -62,7 +62,7 @@ app.patch('/:id/status', async c => {
     JOIN barrel_variants bv ON br.barrel_variant_id = bv.id
     WHERE br.id = ?
   `).bind(c.req.param('id')).first<{
-    reservation_number: string; guest_name: string; guest_email: string;
+    reservation_number: string; user_id: string | null; guest_name: string; guest_email: string;
     liters: number; start_date: string; end_date: string; total: number
   }>()
 
@@ -75,14 +75,24 @@ app.patch('/:id/status', async c => {
     ).bind(crypto.randomUUID(), c.req.param('id'), body.status, body.note ?? null),
   ])
 
-  if (fullRes?.guest_email) {
-    const html = reservationStatusEmailHtml({ ...fullRes, status: body.status })
-    if (html) {
-      await sendEmail(c.env, {
-        to: fullRes.guest_email,
-        subject: `Mr. Hops — Reserva ${fullRes.reservation_number}`,
-        html,
-      })
+  if (fullRes) {
+    let recipientEmail: string | undefined = fullRes.guest_email || undefined
+    let recipientName: string | undefined = fullRes.guest_name || undefined
+    if (!recipientEmail && fullRes.user_id) {
+      const user = await c.env.DB.prepare('SELECT email, name FROM users WHERE id = ?')
+        .bind(fullRes.user_id).first<{ email: string; name: string }>()
+      recipientEmail = user?.email
+      recipientName = user?.name ?? recipientName
+    }
+    if (recipientEmail) {
+      const html = reservationStatusEmailHtml({ ...fullRes, guest_name: recipientName, status: body.status })
+      if (html) {
+        await sendEmail(c.env, {
+          to: recipientEmail,
+          subject: `Mr. Hops — Reserva ${fullRes.reservation_number}`,
+          html,
+        })
+      }
     }
   }
 

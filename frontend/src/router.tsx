@@ -19,6 +19,8 @@ const ShippingPolicy         = lazy(() => import('@/pages/public/ShippingPolicy'
 const ReturnsPolicy          = lazy(() => import('@/pages/public/ReturnsPolicy'))
 const TermsAndConditions     = lazy(() => import('@/pages/public/TermsAndConditions'))
 const PrivacyPolicy          = lazy(() => import('@/pages/public/PrivacyPolicy'))
+const ForgotPassword         = lazy(() => import('@/pages/public/ForgotPassword'))
+const ResetPassword          = lazy(() => import('@/pages/public/ResetPassword'))
 const AgeBlocked             = lazy(() => import('@/pages/public/AgeBlocked'))
 
 const AdminLogin        = lazy(() => import('@/pages/admin/AdminLogin'))
@@ -66,6 +68,8 @@ export const router = createBrowserRouter([
       { path: 'devoluciones',              element: <ReturnsPolicy /> },
       { path: 'terminos',                  element: <TermsAndConditions /> },
       { path: 'privacidad',                element: <PrivacyPolicy /> },
+      { path: 'recuperar-contrasena',     element: <ForgotPassword /> },
+      { path: 'restablecer-contrasena',   element: <ResetPassword /> },
     ],
   },
   {

@@ -17,6 +17,7 @@ ENVIRONMENT = "production"
 FRONTEND_URL = "https://mr-hops-beer.pages.dev"
 R2_PUBLIC_URL = "https://pub-01dac17ad1b246a0998ee20e002ea8ad.r2.dev"
 GOOGLE_CLIENT_ID = "153769844353-6petfa2v32aruqb57lnkobp9kn4tkgiv.apps.googleusercontent.com"
+# MERCADOPAGO_ACCESS_TOKEN se configura como secret: wrangler secret put MERCADOPAGO_ACCESS_TOKEN
 
 # ─── Desarrollo local ──────────────────────────────────────────────────────────
 [env.dev]

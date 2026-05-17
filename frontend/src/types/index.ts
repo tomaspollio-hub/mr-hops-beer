@@ -38,6 +38,8 @@ export interface Product {
   description?: string
   category: ProductCategory
   price: number
+  compare_price?: number
+  sku?: string
   image_url?: string
   stock: number
   active: boolean

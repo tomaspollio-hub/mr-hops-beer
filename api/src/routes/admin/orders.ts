@@ -73,7 +73,7 @@ app.patch('/:id/status', async c => {
   const fullOrder = await c.env.DB.prepare(
     'SELECT * FROM orders WHERE id = ?'
   ).bind(c.req.param('id')).first<{
-    order_number: string; guest_name: string; guest_email: string;
+    order_number: string; user_id: string | null; guest_name: string; guest_email: string;
     total: number; delivery_type: string; delivery_address: string
   }>()
 
@@ -85,14 +85,25 @@ app.patch('/:id/status', async c => {
     ).bind(crypto.randomUUID(), c.req.param('id'), body.status, body.note ?? null),
   ])
 
-  if (fullOrder?.guest_email) {
-    const html = orderStatusEmailHtml({ ...fullOrder, status: body.status })
-    if (html) {
-      await sendEmail(c.env, {
-        to: fullOrder.guest_email,
-        subject: `Mr. Hops — Pedido ${fullOrder.order_number}`,
-        html,
-      })
+  if (fullOrder) {
+    // Resolve recipient email: guest_email or registered user's email
+    let recipientEmail: string | undefined = fullOrder.guest_email || undefined
+    let recipientName: string | undefined = fullOrder.guest_name || undefined
+    if (!recipientEmail && fullOrder.user_id) {
+      const user = await c.env.DB.prepare('SELECT email, name FROM users WHERE id = ?')
+        .bind(fullOrder.user_id).first<{ email: string; name: string }>()
+      recipientEmail = user?.email
+      recipientName = user?.name ?? recipientName
+    }
+    if (recipientEmail) {
+      const html = orderStatusEmailHtml({ ...fullOrder, guest_name: recipientName, status: body.status })
+      if (html) {
+        await sendEmail(c.env, {
+          to: recipientEmail,
+          subject: `Mr. Hops — Pedido ${fullOrder.order_number}`,
+          html,
+        })
+      }
     }
   }
 

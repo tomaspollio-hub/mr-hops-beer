@@ -78,9 +78,16 @@ export default function Login() {
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-50">
-            {loading ? 'Ingresando...' : 'Ingresar'}
-          </button>
+          <div className="flex items-center justify-between">
+            <button type="submit" disabled={loading} className="btn-primary flex-1 disabled:opacity-50">
+              {loading ? 'Ingresando...' : 'Ingresar'}
+            </button>
+          </div>
+          <p className="text-center text-xs text-hops-muted">
+            <Link to="/recuperar-contrasena" className="hover:text-hops-white transition-colors">
+              Olvidé mi contraseña
+            </Link>
+          </p>
         </form>
 
         <p className="text-center text-sm text-hops-muted mt-4">

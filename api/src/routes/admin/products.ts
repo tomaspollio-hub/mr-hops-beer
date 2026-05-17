@@ -20,7 +20,8 @@ app.get('/', async c => {
 app.post('/', async c => {
   const body = await c.req.json<{
     name: string; description?: string; category: string
-    price: number; image_url?: string; stock?: number
+    price: number; compare_price?: number; sku?: string
+    image_url?: string; stock?: number
   }>()
 
   if (!body.name || !body.category || body.price === undefined) {
@@ -29,9 +30,12 @@ app.post('/', async c => {
 
   const id = crypto.randomUUID()
   await c.env.DB.prepare(`
-    INSERT INTO products (id, name, description, category, price, image_url, stock)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).bind(id, body.name, body.description ?? null, body.category, body.price, body.image_url ?? null, body.stock ?? 0).run()
+    INSERT INTO products (id, name, description, category, price, compare_price, sku, image_url, stock)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id, body.name, body.description ?? null, body.category, body.price,
+    body.compare_price ?? null, body.sku ?? null, body.image_url ?? null, body.stock ?? 0,
+  ).run()
 
   return c.json({ data: { id } }, 201)
 })
@@ -40,22 +44,32 @@ app.post('/', async c => {
 app.put('/:id', async c => {
   const body = await c.req.json<{
     name?: string; description?: string; category?: string
-    price?: number; image_url?: string; active?: boolean
+    price?: number; compare_price?: number | null; sku?: string | null
+    image_url?: string; active?: boolean
   }>()
 
   await c.env.DB.prepare(`
     UPDATE products
-    SET name        = COALESCE(?, name),
-        description = COALESCE(?, description),
-        category    = COALESCE(?, category),
-        price       = COALESCE(?, price),
-        image_url   = COALESCE(?, image_url),
-        active      = COALESCE(?, active),
-        updated_at  = datetime('now')
+    SET name          = COALESCE(?, name),
+        description   = COALESCE(?, description),
+        category      = COALESCE(?, category),
+        price         = COALESCE(?, price),
+        compare_price = CASE WHEN ? = '__clear__' THEN NULL ELSE COALESCE(?, compare_price) END,
+        sku           = CASE WHEN ? = '__clear__' THEN NULL ELSE COALESCE(?, sku) END,
+        image_url     = COALESCE(?, image_url),
+        active        = COALESCE(?, active),
+        updated_at    = datetime('now')
     WHERE id = ?
   `).bind(
-    body.name ?? null, body.description ?? null, body.category ?? null,
-    body.price ?? null, body.image_url ?? null,
+    body.name ?? null,
+    body.description ?? null,
+    body.category ?? null,
+    body.price ?? null,
+    body.compare_price === null ? '__clear__' : null,
+    body.compare_price ?? null,
+    body.sku === null ? '__clear__' : null,
+    body.sku ?? null,
+    body.image_url ?? null,
     body.active !== undefined ? (body.active ? 1 : 0) : null,
     c.req.param('id'),
   ).run()

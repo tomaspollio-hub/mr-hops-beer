@@ -28,6 +28,8 @@ export default function AdminProductForm() {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState<ProductCategory>('lata')
   const [price, setPrice] = useState('')
+  const [comparePrice, setComparePrice] = useState('')
+  const [sku, setSku] = useState('')
   const [stock, setStock] = useState('0')
   const [imageUrl, setImageUrl] = useState('')
   const [imagePreview, setImagePreview] = useState('')
@@ -44,6 +46,8 @@ export default function AdminProductForm() {
           setDescription(p.description ?? '')
           setCategory(p.category)
           setPrice(String(p.price))
+          setComparePrice(p.compare_price ? String(p.compare_price) : '')
+          setSku(p.sku ?? '')
           setStock(String(p.stock))
           setImageUrl(p.image_url ?? '')
           setImagePreview(p.image_url ?? '')
@@ -92,6 +96,8 @@ export default function AdminProductForm() {
         description: description || undefined,
         category,
         price: parseFloat(price),
+        compare_price: comparePrice ? parseFloat(comparePrice) : null,
+        sku: sku || null,
         stock: parseInt(stock),
         image_url: imageUrl || undefined,
       }
@@ -163,11 +169,23 @@ export default function AdminProductForm() {
           </select>
         </div>
 
-        {/* Precio y Stock */}
+        {/* Precio, Precio anterior y Stock */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs text-hops-muted uppercase tracking-wider mb-1">Precio (ARS) *</label>
             <input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="1" className="input-field" placeholder="0" />
+          </div>
+          <div>
+            <label className="block text-xs text-hops-muted uppercase tracking-wider mb-1">Precio anterior (tachado)</label>
+            <input type="number" value={comparePrice} onChange={e => setComparePrice(e.target.value)} min="0" step="1" className="input-field" placeholder="0 = sin oferta" />
+          </div>
+        </div>
+
+        {/* SKU y Stock */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs text-hops-muted uppercase tracking-wider mb-1">SKU</label>
+            <input type="text" value={sku} onChange={e => setSku(e.target.value)} className="input-field font-mono" placeholder="MH-001" />
           </div>
           <div>
             <label className="block text-xs text-hops-muted uppercase tracking-wider mb-1">Stock</label>

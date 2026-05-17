@@ -25,6 +25,7 @@ export interface Env {
   R2_PUBLIC_URL: string
   ENVIRONMENT: string
   GOOGLE_CLIENT_ID: string
+  MERCADOPAGO_ACCESS_TOKEN: string
 }
 
 // Valid status transitions

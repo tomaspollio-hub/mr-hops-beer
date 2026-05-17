@@ -12,6 +12,7 @@ import adminOrdersRoute from './routes/admin/orders'
 import adminReservationsRoute from './routes/admin/reservations'
 import adminStockRoute from './routes/admin/stock'
 import adminCustomersRoute from './routes/admin/customers'
+import paymentsRoute from './routes/payments'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -26,6 +27,9 @@ app.route('/api/barrels', productsRoute) // alias filtrado por categoría barril
 app.route('/api/auth', authRoute)
 app.route('/api/orders', ordersRoute)
 app.route('/api/reservations', reservationsRoute)
+
+// Pagos MercadoPago
+app.route('/api/payments', paymentsRoute)
 
 // Rutas autenticadas (usuario)
 app.route('/api/my', usersRoute)
