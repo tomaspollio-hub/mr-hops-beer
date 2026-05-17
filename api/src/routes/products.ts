@@ -17,6 +17,8 @@ app.get('/', async c => {
   } else if (category) {
     query += ' AND category = ?'
     params.push(category)
+  } else {
+    query += " AND category != 'barril'"
   }
 
   query += ' ORDER BY name ASC'
