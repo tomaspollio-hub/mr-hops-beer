@@ -15,6 +15,10 @@ const Login                  = lazy(() => import('@/pages/public/Login'))
 const Register               = lazy(() => import('@/pages/public/Register'))
 const MyOrders               = lazy(() => import('@/pages/public/MyOrders'))
 const Profile                = lazy(() => import('@/pages/public/Profile'))
+const ShippingPolicy         = lazy(() => import('@/pages/public/ShippingPolicy'))
+const ReturnsPolicy          = lazy(() => import('@/pages/public/ReturnsPolicy'))
+const TermsAndConditions     = lazy(() => import('@/pages/public/TermsAndConditions'))
+const PrivacyPolicy          = lazy(() => import('@/pages/public/PrivacyPolicy'))
 const AgeBlocked             = lazy(() => import('@/pages/public/AgeBlocked'))
 
 const AdminLogin        = lazy(() => import('@/pages/admin/AdminLogin'))
@@ -58,6 +62,10 @@ export const router = createBrowserRouter([
       { path: 'registro',                  element: <Register /> },
       { path: 'mis-pedidos',               element: <MyOrders /> },
       { path: 'perfil',                    element: <Profile /> },
+      { path: 'envios',                    element: <ShippingPolicy /> },
+      { path: 'devoluciones',              element: <ReturnsPolicy /> },
+      { path: 'terminos',                  element: <TermsAndConditions /> },
+      { path: 'privacidad',                element: <PrivacyPolicy /> },
     ],
   },
   {

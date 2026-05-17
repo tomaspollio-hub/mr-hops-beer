@@ -3,6 +3,7 @@ import { api } from '@/lib/api'
 import { formatDate, formatARS, ORDER_STATUS_LABEL, RESERVATION_STATUS_LABEL } from '@/lib/utils'
 import { type Order, type BarrelReservation } from '@/types'
 import Spinner from '@/components/ui/Spinner'
+import { useToastStore } from '@/store/toastStore'
 
 interface Customer {
   id: string
@@ -27,8 +28,8 @@ export default function AdminCustomers() {
   const [loadingDetail, setLoadingDetail] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [showReset, setShowReset] = useState(false)
-  const [actionMsg, setActionMsg] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
+  const toast = useToastStore()
 
   useEffect(() => {
     api.get<{ data: Customer[] }>('/admin/customers')
@@ -39,7 +40,6 @@ export default function AdminCustomers() {
   const loadDetail = (id: string) => {
     setLoadingDetail(true)
     setShowReset(false)
-    setActionMsg('')
     api.get<{ data: CustomerDetail }>(`/admin/customers/${id}`)
       .then(r => setSelected(r.data))
       .finally(() => setLoadingDetail(false))
@@ -53,7 +53,7 @@ export default function AdminCustomers() {
       const blocked = res.blocked ? 1 : 0
       setSelected(s => s ? { ...s, blocked } : s)
       setCustomers(cs => cs.map(c => c.id === selected.id ? { ...c, blocked } : c))
-      setActionMsg(res.message)
+      toast.show(res.message)
     } finally {
       setActionLoading(false)
     }
@@ -64,11 +64,11 @@ export default function AdminCustomers() {
     setActionLoading(true)
     try {
       await api.patch(`/admin/customers/${selected.id}/reset-password`, { password: newPassword })
-      setActionMsg('Contraseña actualizada correctamente')
+      toast.show('Contraseña actualizada correctamente')
       setNewPassword('')
       setShowReset(false)
     } catch (e: unknown) {
-      setActionMsg(e instanceof Error ? e.message : 'Error al actualizar contraseña')
+      toast.show(e instanceof Error ? e.message : 'Error al actualizar contraseña', 'error')
     } finally {
       setActionLoading(false)
     }
@@ -163,10 +163,6 @@ export default function AdminCustomers() {
                 )}
               </div>
 
-              {actionMsg && (
-                <p className="text-xs text-hops-green bg-hops-green/10 px-3 py-2 rounded-sm">{actionMsg}</p>
-              )}
-
               {/* Acciones */}
               <div className="flex flex-wrap gap-2 pt-1">
                 <button
@@ -182,7 +178,7 @@ export default function AdminCustomers() {
                 </button>
 
                 <button
-                  onClick={() => { setShowReset(r => !r); setActionMsg('') }}
+                  onClick={() => setShowReset(r => !r)}
                   className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm border border-hops-border text-hops-muted hover:text-hops-white hover:border-hops-white transition-colors duration-150"
                 >
                   Reset contraseña

@@ -4,7 +4,7 @@ import { api } from '@/lib/api'
 import { formatARS, formatDate, ORDER_STATUS_LABEL, ORDER_STATUS_COLOR } from '@/lib/utils'
 import { type Order, type OrderStatus } from '@/types'
 import Badge from '@/components/ui/Badge'
-import Spinner from '@/components/ui/Spinner'
+import { SkeletonOrderCard } from '@/components/ui/Skeleton'
 
 const STATUS_FILTERS: { label: string; value: string }[] = [
   { label: 'Todos', value: '' },
@@ -61,7 +61,11 @@ export default function AdminOrders() {
         ))}
       </div>
 
-      {loading && <div className="flex justify-center py-16"><Spinner className="w-8 h-8" /></div>}
+      {loading && (
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => <SkeletonOrderCard key={i} />)}
+        </div>
+      )}
 
       {!loading && orders.length === 0 && (
         <p className="text-hops-muted text-center py-16">No hay pedidos{statusFilter ? ' con este estado' : ''}.</p>
@@ -74,7 +78,7 @@ export default function AdminOrders() {
             (o.guest_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
             (o.guest_email ?? '').toLowerCase().includes(search.toLowerCase())
           ).map(o => (
-            <div key={o.id} className="card hover:border-hops-border/80 transition-colors">
+            <div key={o.id} className="card border-l-2 border-transparent hover:border-l-hops-green hover:bg-hops-card/80 transition-all duration-150 group">
               <div className="flex flex-wrap items-center gap-3 justify-between">
                 {/* Número y fecha */}
                 <div>

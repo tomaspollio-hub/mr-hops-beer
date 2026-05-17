@@ -4,7 +4,7 @@ import { api } from '@/lib/api'
 import { formatARS, formatDate, RESERVATION_STATUS_LABEL, RESERVATION_STATUS_COLOR, RESERVATION_TRANSITIONS } from '@/lib/utils'
 import { type ReservationStatus } from '@/types'
 import Badge from '@/components/ui/Badge'
-import Spinner from '@/components/ui/Spinner'
+import { SkeletonOrderCard } from '@/components/ui/Skeleton'
 
 interface Reservation {
   id: string
@@ -73,7 +73,11 @@ export default function AdminReservations() {
         ))}
       </div>
 
-      {loading && <div className="flex justify-center py-16"><Spinner className="w-8 h-8" /></div>}
+      {loading && (
+        <div className="space-y-3">
+          {[...Array(4)].map((_, i) => <SkeletonOrderCard key={i} />)}
+        </div>
+      )}
 
       {!loading && reservations.length === 0 && (
         <p className="text-hops-muted text-center py-16">No hay reservas{statusFilter ? ' con este estado' : ''}.</p>
@@ -84,7 +88,7 @@ export default function AdminReservations() {
           {reservations.map(r => {
             const allowedNext = RESERVATION_TRANSITIONS[r.status] ?? []
             return (
-              <div key={r.id} className="card">
+              <div key={r.id} className="card border-l-2 border-transparent hover:border-l-hops-green hover:bg-hops-card/80 transition-all duration-150">
                 <div className="flex flex-wrap items-start gap-4 justify-between mb-3">
                   <div>
                     <p className="font-bold text-hops-green">{r.reservation_number}</p>

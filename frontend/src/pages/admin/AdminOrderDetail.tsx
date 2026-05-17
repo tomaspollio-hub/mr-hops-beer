@@ -5,6 +5,7 @@ import { formatARS, formatDate, ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, ORDER_TR
 import { type Order, type OrderItem, type OrderStatus } from '@/types'
 import Badge from '@/components/ui/Badge'
 import Spinner from '@/components/ui/Spinner'
+import { useToastStore } from '@/store/toastStore'
 
 interface OrderDetail extends Order {
   items: (OrderItem & { name: string; image_url?: string })[]
@@ -17,7 +18,7 @@ export default function AdminOrderDetail() {
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [note, setNote] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const toast = useToastStore()
 
   const load = () => {
     setLoading(true)
@@ -30,13 +31,13 @@ export default function AdminOrderDetail() {
 
   const changeStatus = async (newStatus: OrderStatus) => {
     setUpdating(true)
-    setError(null)
     try {
       await api.patch(`/admin/orders/${id}/status`, { status: newStatus, note: note || undefined })
       setNote('')
+      toast.show(`Estado actualizado: ${ORDER_STATUS_LABEL[newStatus]}`)
       load()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error')
+      toast.show(err instanceof Error ? err.message : 'Error al cambiar estado', 'error')
     } finally {
       setUpdating(false)
     }
@@ -115,7 +116,6 @@ export default function AdminOrderDetail() {
             rows={2}
             className="input-field resize-none mb-3"
           />
-          {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
           <div className="flex flex-wrap gap-2">
             {allowedNext.map(s => (
               <button

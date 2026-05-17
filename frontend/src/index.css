@@ -3,13 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     background-color: #0a0a0a;
@@ -17,10 +13,21 @@
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
+
+  /* Grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.028;
+    pointer-events: none;
+    z-index: 9998;
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -29,43 +36,73 @@
   to   { opacity: 1; }
 }
 
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(110%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
 @layer components {
   .page-enter {
-    animation: fadeIn 0.25s ease-out both;
+    animation: fadeIn 0.3s ease-out both;
   }
 
   .fade-in {
     animation: fadeInFast 0.2s ease-out both;
   }
+
+  .slide-up {
+    animation: slideUp 0.5s ease-out both;
+  }
+
   .btn-primary {
-    @apply bg-hops-green text-hops-black font-bold uppercase tracking-wider px-6 py-3 rounded-sm
+    @apply bg-hops-green text-hops-black font-bold uppercase tracking-widest px-6 py-3 rounded-none
            hover:bg-hops-green-light active:bg-hops-green-dark transition-colors duration-150;
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-hops-green text-hops-green font-bold uppercase tracking-wider px-6 py-3 rounded-sm
+    @apply bg-transparent border-2 border-hops-green text-hops-green font-bold uppercase tracking-widest px-6 py-3 rounded-none
            hover:bg-hops-green hover:text-hops-black transition-colors duration-150;
   }
 
   .btn-gold {
-    @apply bg-hops-gold text-hops-black font-bold uppercase tracking-wider px-6 py-3 rounded-sm
-           hover:bg-hops-gold-light active:bg-hops-gold-dark transition-colors duration-150;
+    @apply bg-hops-yellow text-hops-black font-bold uppercase tracking-widest px-6 py-3 rounded-none
+           hover:bg-hops-gold active:bg-hops-gold-dark transition-colors duration-150;
   }
 
   .card {
-    @apply bg-hops-card border border-hops-border rounded-sm p-4;
+    @apply bg-hops-card border border-hops-border p-4;
   }
 
   .section-title {
-    @apply font-display text-3xl md:text-4xl uppercase tracking-wider text-hops-white;
+    @apply font-display text-5xl md:text-6xl uppercase tracking-wider text-hops-white leading-none;
   }
 
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider;
+  }
+
+  .toast-enter {
+    animation: toastIn 0.25s ease-out both;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
   }
 
   .input-field {
-    @apply w-full bg-hops-black border border-hops-border rounded-sm px-3 py-2 text-hops-white
-           placeholder:text-hops-muted focus:outline-none focus:border-hops-green transition-colors text-sm;
+    @apply w-full bg-hops-black border border-hops-border px-3 py-2.5 text-hops-white
+           placeholder:text-hops-muted focus:outline-none focus:border-hops-green transition-colors text-sm rounded-none;
   }
 }

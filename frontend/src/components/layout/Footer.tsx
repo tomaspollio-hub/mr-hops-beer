@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom'
 
+const LEGAL_LINKS = [
+  { to: '/envios',       label: 'Política de envíos' },
+  { to: '/devoluciones', label: 'Devoluciones' },
+  { to: '/terminos',     label: 'Términos y condiciones' },
+  { to: '/privacidad',   label: 'Privacidad' },
+]
+
 const WHATSAPP = '5492994730001'
 const INSTAGRAM = 'https://www.instagram.com/mr.hopsbeer/'
 const FACEBOOK = 'https://www.facebook.com/profile.php?id=100027472251755'
 const THREADS = 'https://www.threads.com/@mr.hopsbeer'
+const MAPS = 'https://maps.app.goo.gl/nCqUHMnQNxrHJG7J6'
 
 function IconInstagram() {
   return (
@@ -29,6 +37,14 @@ function IconFacebook() {
   )
 }
 
+function IconMapPin() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    </svg>
+  )
+}
+
 function IconThreads() {
   return (
     <svg width="20" height="20" viewBox="0 0 192 192" fill="currentColor">
@@ -50,7 +66,12 @@ export default function Footer() {
               <img src="/logo.jpg" alt="Mr. Hops" className="w-12 h-12 rounded-full object-cover border-2 border-hops-green/30" />
               <p className="font-display text-xl text-hops-green uppercase tracking-wider">Mr. Hops Beer</p>
             </div>
-            <p className="text-sm text-hops-muted">Cervecería artesanal. Latas, PETs, packs y alquiler de barriles.</p>
+            <p className="text-sm text-hops-muted mb-3">Cervecería artesanal. Latas, PETs, packs y alquiler de barriles.</p>
+            <p className="text-xs text-hops-border leading-relaxed">
+              Julián Marcelo Pesci<br />
+              CUIT 20-36257061-2<br />
+              Neuquén (Q8302), Argentina
+            </p>
           </div>
 
           {/* Navegación */}
@@ -99,17 +120,34 @@ export default function Footer() {
                 <span className="text-hops-muted"><IconThreads /></span>
                 Threads
               </a>
+              <a
+                href={MAPS}
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-hops-muted hover:text-hops-yellow transition-colors mt-1"
+              >
+                <span className="text-hops-yellow"><IconMapPin /></span>
+                Cómo llegar
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Legal */}
-        <div className="border-t border-hops-border pt-6">
-          <p className="text-xs text-hops-muted text-center font-bold uppercase tracking-widest">
-            BEBER CON MODERACIÓN. PROHIBIDA LA VENTA A MENORES DE 18 AÑOS.
+        {/* Legal links */}
+        <div className="border-t border-hops-border pt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4">
+          {LEGAL_LINKS.map(l => (
+            <Link key={l.to} to={l.to} className="text-xs text-hops-muted hover:text-hops-green transition-colors">
+              {l.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Legal bottom */}
+        <div className="text-center">
+          <p className="text-xs text-hops-muted font-bold uppercase tracking-widest mb-2">
+            Beber con moderación. Prohibida la venta a menores de 18 años.
           </p>
-          <p className="text-xs text-hops-muted text-center mt-2">
-            © {new Date().getFullYear()} Mr. Hops Beer. Todos los derechos reservados.
+          <p className="text-xs text-hops-border">
+            © {new Date().getFullYear()} Mr. Hops Beer — Julián Marcelo Pesci · CUIT 20-36257061-2
           </p>
         </div>
       </div>
