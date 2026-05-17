@@ -22,7 +22,8 @@ export default function AdminLayout() {
     <div className="min-h-screen flex bg-hops-black">
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-56 bg-hops-dark border-r border-hops-border p-4">
-        <Link to="/" className="font-display text-lg text-hops-green uppercase tracking-wider mb-8">
+        <Link to="/" className="flex items-center gap-2 font-display text-lg text-hops-green uppercase tracking-wider mb-8">
+          <img src="/logo.jpg" alt="Mr. Hops" className="w-8 h-8 rounded-full object-cover border border-hops-green/30" />
           Mr. Hops
         </Link>
         <p className="text-xs text-hops-muted uppercase tracking-widest mb-3">Admin</p>
@@ -60,7 +61,10 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col">
         {/* Mobile top bar */}
         <header className="md:hidden bg-hops-dark border-b border-hops-border px-4 h-14 flex items-center">
-          <span className="font-display text-hops-green uppercase tracking-wider">Admin — Mr. Hops</span>
+          <div className="flex items-center gap-2">
+            <img src="/logo.jpg" alt="Mr. Hops" className="w-7 h-7 rounded-full object-cover border border-hops-green/30" />
+            <span className="font-display text-hops-green uppercase tracking-wider">Admin — Mr. Hops</span>
+          </div>
         </header>
 
         <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto page-enter">

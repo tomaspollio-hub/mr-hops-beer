@@ -20,6 +20,7 @@ export default function AdminOrders() {
   const [params, setParams] = useSearchParams()
   const statusFilter = params.get('status') ?? ''
   const [orders, setOrders] = useState<Order[]>([])
+  const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -39,6 +40,13 @@ export default function AdminOrders() {
         <h1 className="section-title">Pedidos</h1>
         <span className="text-sm text-hops-muted">{total} en total</span>
       </div>
+
+      {/* Búsqueda */}
+      <input
+        type="text" value={search} onChange={e => setSearch(e.target.value)}
+        placeholder="Buscar por número, cliente o email..."
+        className="input-field mb-4"
+      />
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-2 mb-6">
@@ -61,7 +69,11 @@ export default function AdminOrders() {
 
       {!loading && orders.length > 0 && (
         <div className="space-y-3">
-          {orders.map(o => (
+          {orders.filter(o => !search ||
+            o.order_number.toLowerCase().includes(search.toLowerCase()) ||
+            (o.guest_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
+            (o.guest_email ?? '').toLowerCase().includes(search.toLowerCase())
+          ).map(o => (
             <div key={o.id} className="card hover:border-hops-border/80 transition-colors">
               <div className="flex flex-wrap items-center gap-3 justify-between">
                 {/* Número y fecha */}

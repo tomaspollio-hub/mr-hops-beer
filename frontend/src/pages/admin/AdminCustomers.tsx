@@ -21,6 +21,7 @@ interface CustomerDetail extends Customer {
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([])
+  const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<CustomerDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [loadingDetail, setLoadingDetail] = useState(false)
@@ -92,14 +93,23 @@ export default function AdminCustomers() {
       {/* Lista */}
       <div>
         <h1 className="section-title mb-6">Clientes</h1>
-        <p className="text-hops-muted text-sm mb-4">{customers.length} registrados</p>
+        <div className="flex items-center gap-3 mb-4">
+          <input
+            type="text" value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por nombre o email..."
+            className="input-field flex-1"
+          />
+          <span className="text-hops-muted text-sm whitespace-nowrap">{customers.length} registrados</span>
+        </div>
 
         {customers.length === 0 && (
           <p className="text-hops-muted text-center py-12">No hay clientes registrados todavía.</p>
         )}
 
         <div className="space-y-2">
-          {customers.map(c => (
+          {customers.filter(c =>
+            !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase())
+          ).map(c => (
             <button
               key={c.id}
               onClick={() => loadDetail(c.id)}
@@ -125,9 +135,10 @@ export default function AdminCustomers() {
       <div>
         {loadingDetail && <div className="flex justify-center py-20"><Spinner className="w-8 h-8" /></div>}
 
-        {!loadingDetail && !selected && (
-          <div className="card text-center py-12 text-hops-muted text-sm">
-            Seleccioná un cliente para ver su historial
+        {!loadingDetail && !selected && customers.length > 0 && (
+          <div className="card inline-flex items-center gap-2 px-4 py-2 text-hops-muted text-xs border-dashed">
+            <span className="text-base">←</span>
+            <span>Seleccioná un cliente</span>
           </div>
         )}
 

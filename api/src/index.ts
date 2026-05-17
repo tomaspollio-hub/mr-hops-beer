@@ -41,8 +41,9 @@ app.route('/api/admin/customers', adminCustomersRoute)
 // Dashboard admin
 app.get('/api/admin/dashboard', async c => {
   const today = new Date().toISOString().slice(0, 10)
+  const monthStart = today.slice(0, 7) + '-01'
 
-  const [ordersToday, pendingOrders, activeReservations] = await Promise.all([
+  const [ordersToday, pendingOrders, activeReservations, revenueMonth, revenueToday, pendingReservations] = await Promise.all([
     c.env.DB.prepare(
       `SELECT status, COUNT(*) as count FROM orders WHERE date(created_at) = ? GROUP BY status`,
     ).bind(today).all(),
@@ -52,12 +53,24 @@ app.get('/api/admin/dashboard', async c => {
     c.env.DB.prepare(
       `SELECT COUNT(*) as count FROM barrel_reservations WHERE status IN ('confirmed','barrel_delivered')`,
     ).first<{ count: number }>(),
+    c.env.DB.prepare(
+      `SELECT COALESCE(SUM(total),0) as total FROM orders WHERE date(created_at) >= ? AND status != 'cancelled'`,
+    ).bind(monthStart).first<{ total: number }>(),
+    c.env.DB.prepare(
+      `SELECT COALESCE(SUM(total),0) as total FROM orders WHERE date(created_at) = ? AND status != 'cancelled'`,
+    ).bind(today).first<{ total: number }>(),
+    c.env.DB.prepare(
+      `SELECT COUNT(*) as count FROM barrel_reservations WHERE status = 'pending_confirmation'`,
+    ).first<{ count: number }>(),
   ])
 
   return c.json({
     orders_today: ordersToday.results,
     pending_orders: pendingOrders?.count ?? 0,
     active_reservations: activeReservations?.count ?? 0,
+    pending_reservations: pendingReservations?.count ?? 0,
+    revenue_today: revenueToday?.total ?? 0,
+    revenue_month: revenueMonth?.total ?? 0,
   })
 })
 

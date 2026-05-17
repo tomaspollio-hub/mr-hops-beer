@@ -44,18 +44,14 @@ function baseHtml(title: string, body: string): string {
 }
 
 const ORDER_STATUS_LABELS: Record<string, string> = {
-  confirmed:       '✅ Tu pedido fue confirmado',
-  in_preparation:  '🍺 Tu pedido está en preparación',
-  ready:           '📦 Tu pedido está listo',
-  delivered:       '🎉 Tu pedido fue entregado',
-  cancelled:       '❌ Tu pedido fue cancelado',
+  confirmed: '✅ Tu pedido fue confirmado',
+  ready:     '📦 Tu pedido está listo',
+  cancelled: '❌ Tu pedido fue cancelado',
 }
 
 const RESERVATION_STATUS_LABELS: Record<string, string> = {
-  confirmed:       '✅ Tu reserva de barril fue confirmada',
-  barrel_delivered:'🚚 El barril fue entregado',
-  barrel_returned: '✅ Reserva finalizada — barril devuelto',
-  cancelled:       '❌ Tu reserva fue cancelada',
+  confirmed: '✅ Tu reserva de barril fue confirmada',
+  cancelled: '❌ Tu reserva fue cancelada',
 }
 
 export function orderStatusEmailHtml(order: {
@@ -107,6 +103,15 @@ export function reservationStatusEmailHtml(res: {
       <tr><td style="color:#888;padding:4px 0">Total</td><td><strong style="color:#F5C518">$${res.total.toLocaleString('es-AR')}</strong></td></tr>
     </table>
     <p>Cualquier consulta escribinos por WhatsApp o Instagram <strong>@mr.hopsbeer</strong></p>
+  `)
+}
+
+export function welcomeEmailHtml(name: string): string {
+  return baseHtml('¡Bienvenido a Mr. Hops Beer!', `
+    <p>Hola <strong>${name}</strong>, gracias por registrarte.</p>
+    <p>Ya podés explorar nuestra selección de cervezas artesanales y hacer tu primer pedido.</p>
+    <p>Seguinos en Instagram <strong>@mr.hopsbeer</strong> para novedades y lanzamientos.</p>
+    <p>¡Salud! 🍺</p>
   `)
 }
 

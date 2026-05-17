@@ -8,6 +8,9 @@ interface DashboardData {
   orders_today: { status: string; count: number }[]
   pending_orders: number
   active_reservations: number
+  pending_reservations: number
+  revenue_today: number
+  revenue_month: number
 }
 
 export default function AdminDashboard() {
@@ -30,21 +33,37 @@ export default function AdminDashboard() {
 
       {/* Alertas */}
       {(data?.pending_orders ?? 0) > 0 && (
-        <div className="mb-6 p-4 border border-hops-gold/40 bg-hops-gold/10 rounded-sm flex items-center justify-between">
+        <div className="mb-3 p-4 border border-hops-gold/40 bg-hops-gold/10 rounded-sm flex items-center justify-between">
           <p className="text-hops-gold font-bold text-sm">
             ⚠️ {data!.pending_orders} pedido{data!.pending_orders !== 1 ? 's' : ''} pendiente{data!.pending_orders !== 1 ? 's' : ''} de confirmación
           </p>
-          <Link to="/admin/pedidos?status=pending_confirmation" className="text-xs text-hops-gold underline">
-            Ver pedidos →
-          </Link>
+          <Link to="/admin/pedidos" className="text-xs text-hops-gold underline">Ver →</Link>
+        </div>
+      )}
+      {(data?.pending_reservations ?? 0) > 0 && (
+        <div className="mb-6 p-4 border border-hops-gold/40 bg-hops-gold/10 rounded-sm flex items-center justify-between">
+          <p className="text-hops-gold font-bold text-sm">
+            ⚠️ {data!.pending_reservations} reserva{data!.pending_reservations !== 1 ? 's' : ''} pendiente{data!.pending_reservations !== 1 ? 's' : ''} de confirmación
+          </p>
+          <Link to="/admin/reservas" className="text-xs text-hops-gold underline">Ver →</Link>
         </div>
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <StatCard label="Pedidos hoy" value={String(totalToday)} />
         <StatCard label="Sin confirmar" value={String(data?.pending_orders ?? 0)} highlight />
         <StatCard label="Reservas activas" value={String(data?.active_reservations ?? 0)} />
+        <StatCard label="Facturado hoy" value={formatARS(data?.revenue_today ?? 0)} gold />
+      </div>
+
+      {/* Revenue mes */}
+      <div className="card mb-6 flex items-center justify-between">
+        <div>
+          <p className="text-xs text-hops-muted uppercase tracking-wider mb-1">Facturado este mes</p>
+          <p className="font-display text-3xl text-hops-gold">{formatARS(data?.revenue_month ?? 0)}</p>
+        </div>
+        <p className="text-xs text-hops-muted">(pedidos no cancelados)</p>
       </div>
 
       {/* Pedidos de hoy por estado */}
@@ -80,10 +99,11 @@ export default function AdminDashboard() {
   )
 }
 
-function StatCard({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function StatCard({ label, value, highlight, gold }: { label: string; value: string; highlight?: boolean; gold?: boolean }) {
+  const isAlert = highlight && Number(value) > 0
   return (
-    <div className={`card text-center ${highlight && Number(value) > 0 ? 'border-hops-gold/40' : ''}`}>
-      <p className={`font-display text-4xl mb-1 ${highlight && Number(value) > 0 ? 'text-hops-gold' : 'text-hops-green'}`}>{value}</p>
+    <div className={`card text-center ${isAlert ? 'border-hops-gold/40' : ''}`}>
+      <p className={`font-display text-3xl mb-1 ${isAlert ? 'text-hops-gold' : gold ? 'text-hops-gold' : 'text-hops-green'}`}>{value}</p>
       <p className="text-xs text-hops-muted uppercase tracking-wider">{label}</p>
     </div>
   )

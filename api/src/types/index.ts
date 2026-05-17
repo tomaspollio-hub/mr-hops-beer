@@ -24,6 +24,7 @@ export interface Env {
   FRONTEND_URL: string
   R2_PUBLIC_URL: string
   ENVIRONMENT: string
+  GOOGLE_CLIENT_ID: string
 }
 
 // Valid status transitions

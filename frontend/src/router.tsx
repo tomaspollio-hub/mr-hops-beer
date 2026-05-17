@@ -14,6 +14,7 @@ const ReservationConfirmation = lazy(() => import('@/pages/public/ReservationCon
 const Login                  = lazy(() => import('@/pages/public/Login'))
 const Register               = lazy(() => import('@/pages/public/Register'))
 const MyOrders               = lazy(() => import('@/pages/public/MyOrders'))
+const Profile                = lazy(() => import('@/pages/public/Profile'))
 const AgeBlocked             = lazy(() => import('@/pages/public/AgeBlocked'))
 
 const AdminLogin        = lazy(() => import('@/pages/admin/AdminLogin'))
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
       { path: 'login',                     element: <Login /> },
       { path: 'registro',                  element: <Register /> },
       { path: 'mis-pedidos',               element: <MyOrders /> },
+      { path: 'perfil',                    element: <Profile /> },
     ],
   },
   {

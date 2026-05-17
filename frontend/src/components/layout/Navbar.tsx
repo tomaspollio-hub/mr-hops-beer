@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-display text-xl uppercase tracking-wider text-hops-green">
-          <span className="text-2xl">🍺</span>
+          <img src="/logo.jpg" alt="Mr. Hops" className="w-9 h-9 rounded-full object-cover border-2 border-hops-green/30" />
           Mr. Hops
         </Link>
 
@@ -53,7 +53,12 @@ export default function Navbar() {
 
           {user ? (
             <div className="hidden md:flex items-center gap-2">
-              <Link to="/mis-pedidos" className="text-sm text-hops-muted hover:text-hops-white transition-colors">
+              {user.role === 'admin' && (
+                <Link to="/admin" className="text-xs font-bold uppercase tracking-wider text-hops-green border border-hops-green/40 px-2 py-1 rounded-sm hover:bg-hops-green hover:text-hops-black transition-colors">
+                  Admin
+                </Link>
+              )}
+              <Link to="/perfil" className="text-sm text-hops-muted hover:text-hops-white transition-colors">
                 {user.name.split(' ')[0]}
               </Link>
               <button onClick={logout} className="text-sm text-hops-muted hover:text-red-400 transition-colors">
@@ -95,6 +100,10 @@ export default function Navbar() {
           ))}
           {user ? (
             <>
+              {user.role === 'admin' && (
+                <Link to="/admin" onClick={() => setOpen(false)} className="text-sm text-hops-green font-bold">Panel admin</Link>
+              )}
+              <Link to="/perfil" onClick={() => setOpen(false)} className="text-sm text-hops-muted">Mi perfil</Link>
               <Link to="/mis-pedidos" onClick={() => setOpen(false)} className="text-sm text-hops-muted">Mis pedidos</Link>
               <button onClick={() => { logout(); setOpen(false) }} className="text-sm text-red-400 text-left">Cerrar sesión</button>
             </>
