@@ -57,12 +57,13 @@ app.post('/login', async c => {
   }
 
   const user = await c.env.DB.prepare(
-    'SELECT id, email, name, phone, role, password_hash FROM users WHERE email = ?',
+    'SELECT id, email, name, phone, role, blocked, password_hash FROM users WHERE email = ?',
   )
     .bind(body.email)
-    .first<{ id: string; email: string; name: string; phone: string; role: string; password_hash: string }>()
+    .first<{ id: string; email: string; name: string; phone: string; role: string; blocked: number; password_hash: string }>()
 
   if (!user) return c.json({ error: 'Credenciales incorrectas' }, 401)
+  if (user.blocked) return c.json({ error: 'Tu cuenta está suspendida. Contactá con nosotros.' }, 403)
 
   const hash = await hashPassword(body.password)
   if (hash !== user.password_hash) return c.json({ error: 'Credenciales incorrectas' }, 401)

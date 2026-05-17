@@ -63,7 +63,7 @@ export default function AdminLayout() {
           <span className="font-display text-hops-green uppercase tracking-wider">Admin — Mr. Hops</span>
         </header>
 
-        <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto page-enter">
           <Outlet />
         </main>
       </div>

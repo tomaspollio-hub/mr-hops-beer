@@ -9,7 +9,7 @@ export default function PublicLayout() {
       <AgeGate />
       <div className="min-h-screen flex flex-col bg-hops-black">
         <Navbar />
-        <main className="flex-1">
+        <main className="flex-1 page-enter">
           <Outlet />
         </main>
         <Footer />
