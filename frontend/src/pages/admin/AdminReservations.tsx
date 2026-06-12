@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { InboxIcon } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatARS, formatDate, RESERVATION_STATUS_LABEL, RESERVATION_STATUS_COLOR, RESERVATION_TRANSITIONS } from '@/lib/utils'
 import { type ReservationStatus } from '@/types'
 import Badge from '@/components/ui/Badge'
 import { SkeletonOrderCard } from '@/components/ui/Skeleton'
+import { cn } from '@/lib/utils'
 
 interface Reservation {
   id: string
@@ -21,20 +23,20 @@ interface Reservation {
 }
 
 const STATUS_FILTERS = [
-  { label: 'Todas', value: '' },
-  { label: 'Sin confirmar', value: 'pending_confirmation' },
-  { label: 'Confirmadas', value: 'confirmed' },
+  { label: 'Todas',           value: '' },
+  { label: 'Sin confirmar',   value: 'pending_confirmation' },
+  { label: 'Confirmadas',     value: 'confirmed' },
   { label: 'Barril entregado', value: 'barrel_delivered' },
-  { label: 'Devuelto', value: 'barrel_returned' },
-  { label: 'Canceladas', value: 'cancelled' },
+  { label: 'Devuelto',        value: 'barrel_returned' },
+  { label: 'Canceladas',      value: 'cancelled' },
 ]
 
 export default function AdminReservations() {
-  const [params, setParams] = useSearchParams()
-  const statusFilter = params.get('status') ?? ''
+  const [params, setParams]       = useSearchParams()
+  const statusFilter              = params.get('status') ?? ''
   const [reservations, setReservations] = useState<Reservation[]>([])
-  const [loading, setLoading] = useState(true)
-  const [updating, setUpdating] = useState<string | null>(null)
+  const [loading, setLoading]     = useState(true)
+  const [updating, setUpdating]   = useState<string | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -61,12 +63,12 @@ export default function AdminReservations() {
       <h1 className="section-title mb-6">Reservas de barriles</h1>
 
       {/* Filtros */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1">
         {STATUS_FILTERS.map(f => (
           <button
             key={f.value}
             onClick={() => setParams(f.value ? { status: f.value } : {})}
-            className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-sm transition-colors ${statusFilter === f.value ? 'bg-hops-green text-hops-black border-hops-green' : 'border-hops-border text-hops-muted hover:border-hops-green/50'}`}
+            className={cn('filter-tab shrink-0', statusFilter === f.value ? 'filter-tab-active' : 'filter-tab-inactive')}
           >
             {f.label}
           </button>
@@ -80,7 +82,12 @@ export default function AdminReservations() {
       )}
 
       {!loading && reservations.length === 0 && (
-        <p className="text-hops-muted text-center py-16">No hay reservas{statusFilter ? ' con este estado' : ''}.</p>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 rounded-full bg-hops-raised flex items-center justify-center mx-auto mb-4">
+            <InboxIcon size={28} className="text-hops-subtle" />
+          </div>
+          <p className="text-hops-muted">No hay reservas{statusFilter ? ' con este estado' : ''}.</p>
+        </div>
       )}
 
       {!loading && reservations.length > 0 && (
@@ -88,10 +95,13 @@ export default function AdminReservations() {
           {reservations.map(r => {
             const allowedNext = RESERVATION_TRANSITIONS[r.status] ?? []
             return (
-              <div key={r.id} className="card border-l-2 border-transparent hover:border-l-hops-green hover:bg-hops-card/80 transition-all duration-150">
-                <div className="flex flex-wrap items-start gap-4 justify-between mb-3">
+              <div
+                key={r.id}
+                className="card border-l-2 border-transparent hover:border-l-hops-green hover:bg-hops-raised/30 transition-all duration-150"
+              >
+                <div className="flex flex-wrap items-start gap-4 justify-between mb-4">
                   <div>
-                    <p className="font-bold text-hops-green">{r.reservation_number}</p>
+                    <p className="font-bold text-hops-green font-display tracking-wide">{r.reservation_number}</p>
                     <p className="text-sm text-hops-white mt-0.5">{r.barrel_name} — {r.liters}L</p>
                     <p className="text-xs text-hops-muted mt-1">
                       {formatDate(r.start_date)} → {formatDate(r.end_date)}
@@ -101,7 +111,7 @@ export default function AdminReservations() {
                     <Badge className={RESERVATION_STATUS_COLOR[r.status]}>
                       {RESERVATION_STATUS_LABEL[r.status]}
                     </Badge>
-                    <p className="text-hops-gold font-bold mt-1">{formatARS(r.total)}</p>
+                    <p className="text-hops-gold font-bold mt-1.5">{formatARS(r.total)}</p>
                     {r.deposit_amount > 0 && (
                       <p className="text-xs text-hops-muted">Depósito: {formatARS(r.deposit_amount)}</p>
                     )}
@@ -115,8 +125,9 @@ export default function AdminReservations() {
                     {r.guest_phone && (
                       <a
                         href={`https://wa.me/${r.guest_phone.replace(/\D/g, '')}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="ml-3 text-xs text-hops-green hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-3 text-xs text-hops-green hover:text-hops-green-light transition-colors"
                       >
                         WhatsApp →
                       </a>
@@ -125,14 +136,17 @@ export default function AdminReservations() {
 
                   {/* Acciones */}
                   {allowedNext.length > 0 && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       {allowedNext.map(next => (
                         <button
                           key={next}
                           disabled={updating === r.id}
                           onClick={() => changeStatus(r.id, r.status, next)}
-                          className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-sm transition-colors disabled:opacity-50
-                            ${next === 'cancelled' ? 'border-red-500/50 text-red-400 hover:bg-red-500/10' : 'border-hops-green text-hops-green hover:bg-hops-green/10'}`}
+                          className={`px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg border transition-all duration-150 disabled:opacity-40 active:scale-[0.97] ${
+                            next === 'cancelled'
+                              ? 'border-hops-error/40 text-hops-error hover:bg-hops-error/10'
+                              : 'border-hops-green text-hops-green hover:bg-hops-green/10'
+                          }`}
                         >
                           → {RESERVATION_STATUS_LABEL[next]}
                         </button>

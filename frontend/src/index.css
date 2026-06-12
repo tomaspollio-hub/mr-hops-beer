@@ -3,31 +3,26 @@
 @tailwind utilities;
 
 @layer base {
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-  html { scroll-behavior: smooth; }
-
-  body {
-    background-color: #0a0a0a;
-    color: #f5f5f5;
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
   }
 
-  /* Grain texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.028;
-    pointer-events: none;
-    z-index: 9998;
+  body {
+    background-color: #0C0C10;
+    color: #EDEDF2;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color-scheme: dark;
   }
 }
 
+/* ── Animations ─────────────────────────────────────────────────────────── */
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -37,7 +32,12 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px); }
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -46,14 +46,43 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(110%); }
+}
+
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
 
+@keyframes badgePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.6); opacity: 0; }
+  65%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to   { opacity: 0; transform: translateX(56px) scale(0.95); }
+}
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Animation utilities ─────────────────────────────────────────────────── */
+
 @layer components {
   .page-enter {
-    animation: fadeIn 0.3s ease-out both;
+    animation: fadeIn 0.35s ease-out both;
   }
 
   .fade-in {
@@ -64,45 +93,125 @@
     animation: slideUp 0.5s ease-out both;
   }
 
+  .menu-enter {
+    animation: slideDown 0.2s ease-out both;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────── */
+
   .btn-primary {
-    @apply bg-hops-green text-hops-black font-bold uppercase tracking-widest px-6 py-3 rounded-none
-           hover:bg-hops-green-light active:bg-hops-green-dark transition-colors duration-150;
+    @apply bg-hops-green text-hops-black font-bold uppercase tracking-wider px-5 py-2.5 rounded
+           hover:bg-hops-green-light active:scale-[0.97] active:bg-hops-green-dark
+           transition-all duration-150 cursor-pointer inline-flex items-center justify-center
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none;
   }
 
   .btn-secondary {
-    @apply bg-transparent border-2 border-hops-green text-hops-green font-bold uppercase tracking-widest px-6 py-3 rounded-none
-           hover:bg-hops-green hover:text-hops-black transition-colors duration-150;
+    @apply bg-transparent border border-hops-green text-hops-green font-bold uppercase tracking-wider px-5 py-2.5 rounded
+           hover:bg-hops-green/10 hover:text-hops-green-light active:scale-[0.97]
+           transition-all duration-150 cursor-pointer inline-flex items-center justify-center;
   }
 
   .btn-gold {
-    @apply bg-hops-yellow text-hops-black font-bold uppercase tracking-widest px-6 py-3 rounded-none
-           hover:bg-hops-gold active:bg-hops-gold-dark transition-colors duration-150;
+    @apply bg-hops-gold text-hops-black font-bold uppercase tracking-wider px-5 py-2.5 rounded
+           hover:bg-hops-gold-light active:scale-[0.97] active:bg-hops-gold-dark
+           transition-all duration-150 cursor-pointer inline-flex items-center justify-center
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none;
   }
 
-  .card {
-    @apply bg-hops-card border border-hops-border p-4;
+  .btn-ghost {
+    @apply bg-transparent text-hops-muted font-medium px-4 py-2 rounded
+           hover:bg-hops-raised hover:text-hops-white active:scale-[0.97]
+           transition-all duration-150 cursor-pointer;
   }
+
+  /* ── Card ────────────────────────────────────────────────────────────── */
+
+  .card {
+    @apply bg-hops-card border border-hops-border rounded-xl p-5;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200
+           hover:border-hops-green/30 hover:-translate-y-0.5
+           hover:shadow-xl hover:shadow-black/60;
+  }
+
+  /* ── Typography ──────────────────────────────────────────────────────── */
 
   .section-title {
     @apply font-display text-5xl md:text-6xl uppercase tracking-wider text-hops-white leading-none;
   }
 
+  /* ── Badge ───────────────────────────────────────────────────────────── */
+
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded;
   }
+
+  /* ── Toast ───────────────────────────────────────────────────────────── */
 
   .toast-enter {
     animation: toastIn 0.25s ease-out both;
   }
 
+  /* ── Skeleton ────────────────────────────────────────────────────────── */
+
   .skeleton {
-    background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+    background: linear-gradient(90deg, #1E1E26 25%, #26262E 50%, #1E1E26 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
+    border-radius: 6px;
   }
 
+  /* ── Inputs ──────────────────────────────────────────────────────────── */
+
   .input-field {
-    @apply w-full bg-hops-black border border-hops-border px-3 py-2.5 text-hops-white
-           placeholder:text-hops-muted focus:outline-none focus:border-hops-green transition-colors text-sm rounded-none;
+    @apply w-full bg-hops-black border border-hops-border rounded-md px-4 py-3 text-hops-white
+           placeholder:text-hops-subtle focus:outline-none focus:border-hops-green
+           focus:ring-2 focus:ring-hops-green/15 transition-all duration-150 text-sm;
+  }
+
+  .input-error {
+    @apply border-hops-error focus:border-hops-error focus:ring-hops-error/15;
+  }
+
+  /* ── Filter tabs ─────────────────────────────────────────────────────── */
+
+  .filter-tab {
+    @apply px-4 py-2 text-sm font-bold uppercase tracking-wider rounded transition-all duration-150;
+  }
+
+  .filter-tab-active {
+    @apply bg-hops-green text-hops-black;
+  }
+
+  .filter-tab-inactive {
+    @apply bg-transparent text-hops-muted border border-hops-border
+           hover:border-hops-green/40 hover:text-hops-white;
+  }
+
+  /* ── Cart badge pop ──────────────────────────────────────────────────── */
+
+  .badge-pop {
+    animation: badgePop 0.3s ease-out;
+  }
+
+  /* ── Toast exit ──────────────────────────────────────────────────────── */
+
+  .toast-exit {
+    animation: toastSlideOut 0.3s ease-in both;
+  }
+
+  /* ── Success pop-in (checkmark, confirmación) ────────────────────────── */
+
+  .pop-in {
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* ── Scroll reveal ───────────────────────────────────────────────────── */
+
+  .reveal-up {
+    animation: revealUp 0.6s ease-out both;
   }
 }

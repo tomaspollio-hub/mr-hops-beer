@@ -40,7 +40,7 @@ export default function OrderConfirmation() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-6 pop-in">
         <CheckCircle size={64} className="text-hops-green" />
       </div>
 

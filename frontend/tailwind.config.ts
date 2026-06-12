@@ -5,21 +5,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Paleta Mr. Hops Beer
         hops: {
-          black:    '#0a0a0a',
-          dark:     '#111111',
-          card:     '#141414',
-          border:   '#222222',
-          green:    '#7EC825',
-          'green-light': '#96d93a',
-          'green-dark':  '#65a01e',
-          gold:     '#F5C518',
-          'gold-light':  '#f7d04a',
-          'gold-dark':   '#c9a010',
-          yellow:   '#FFD600',
-          white:    '#f5f5f5',
-          muted:    '#777777',
+          black:         '#0C0C10',
+          dark:          '#111118',
+          card:          '#18181E',
+          raised:        '#1E1E26',
+          border:        '#32323E',
+          'border-subtle': '#252530',
+          green:         '#64B831',
+          'green-light': '#78D23A',
+          'green-dark':  '#4A8A22',
+          gold:          '#D4900E',
+          'gold-light':  '#E8A820',
+          'gold-dark':   '#B87A0C',
+          yellow:        '#F0B800',
+          white:         '#EDEDF2',
+          muted:         '#8A8A98',
+          subtle:        '#56566A',
+          error:         '#E5484D',
+          success:       '#30BD71',
         },
       },
       fontFamily: {
@@ -27,7 +31,7 @@ export default {
         body:    ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'hops-gradient': 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
+        'hops-gradient': 'linear-gradient(135deg, #0C0C10 0%, #18181E 100%)',
       },
     },
   },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Pencil, EyeOff, Eye } from 'lucide-react'
+import { Plus, Pencil, EyeOff, Eye, Package } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatARS } from '@/lib/utils'
 import { type Product, type ProductCategory } from '@/types'
@@ -54,7 +54,7 @@ export default function AdminProducts() {
               <div className="w-12 h-12 shrink-0 rounded-sm bg-hops-border overflow-hidden">
                 {p.image_url
                   ? <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
-                  : <div className="w-full h-full flex items-center justify-center text-xl">🍺</div>
+                  : <div className="w-full h-full flex items-center justify-center"><Package size={18} className="text-hops-subtle" /></div>
                 }
               </div>
 

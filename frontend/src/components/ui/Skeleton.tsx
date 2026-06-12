@@ -1,5 +1,5 @@
 export function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`skeleton rounded-none ${className}`} />
+  return <div className={`skeleton ${className}`} />
 }
 
 export function SkeletonOrderCard() {

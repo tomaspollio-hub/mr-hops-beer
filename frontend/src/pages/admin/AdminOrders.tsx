@@ -1,27 +1,29 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { Search, InboxIcon } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatARS, formatDate, ORDER_STATUS_LABEL, ORDER_STATUS_COLOR } from '@/lib/utils'
 import { type Order, type OrderStatus } from '@/types'
 import Badge from '@/components/ui/Badge'
 import { SkeletonOrderCard } from '@/components/ui/Skeleton'
+import { cn } from '@/lib/utils'
 
 const STATUS_FILTERS: { label: string; value: string }[] = [
-  { label: 'Todos', value: '' },
-  { label: 'Sin confirmar', value: 'pending_confirmation' },
-  { label: 'Confirmados', value: 'confirmed' },
+  { label: 'Todos',          value: '' },
+  { label: 'Sin confirmar',  value: 'pending_confirmation' },
+  { label: 'Confirmados',    value: 'confirmed' },
   { label: 'En preparación', value: 'in_preparation' },
-  { label: 'Listos', value: 'ready' },
-  { label: 'Entregados', value: 'delivered' },
-  { label: 'Cancelados', value: 'cancelled' },
+  { label: 'Listos',         value: 'ready' },
+  { label: 'Entregados',     value: 'delivered' },
+  { label: 'Cancelados',     value: 'cancelled' },
 ]
 
 export default function AdminOrders() {
   const [params, setParams] = useSearchParams()
   const statusFilter = params.get('status') ?? ''
-  const [orders, setOrders] = useState<Order[]>([])
-  const [search, setSearch] = useState('')
-  const [total, setTotal] = useState(0)
+  const [orders, setOrders]   = useState<Order[]>([])
+  const [search, setSearch]   = useState('')
+  const [total, setTotal]     = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -32,29 +34,38 @@ export default function AdminOrders() {
       .finally(() => setLoading(false))
   }, [statusFilter])
 
-  const WA = import.meta.env.VITE_WHATSAPP_NUMBER ?? '5491100000000'
+  const filtered = orders.filter(o => !search ||
+    o.order_number.toLowerCase().includes(search.toLowerCase()) ||
+    (o.guest_name  ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (o.guest_email ?? '').toLowerCase().includes(search.toLowerCase()),
+  )
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="section-title">Pedidos</h1>
-        <span className="text-sm text-hops-muted">{total} en total</span>
+        <span className="text-sm text-hops-muted bg-hops-raised px-3 py-1.5 rounded-lg">{total} en total</span>
       </div>
 
       {/* Búsqueda */}
-      <input
-        type="text" value={search} onChange={e => setSearch(e.target.value)}
-        placeholder="Buscar por número, cliente o email..."
-        className="input-field mb-4"
-      />
+      <div className="relative mb-4">
+        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-hops-subtle pointer-events-none" />
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Buscar por número, cliente o email..."
+          className="input-field pl-10"
+        />
+      </div>
 
       {/* Filtros */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1">
         {STATUS_FILTERS.map(f => (
           <button
             key={f.value}
             onClick={() => setParams(f.value ? { status: f.value } : {})}
-            className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-sm transition-colors ${statusFilter === f.value ? 'bg-hops-green text-hops-black border-hops-green' : 'border-hops-border text-hops-muted hover:border-hops-green/50'}`}
+            className={cn('filter-tab shrink-0', statusFilter === f.value ? 'filter-tab-active' : 'filter-tab-inactive')}
           >
             {f.label}
           </button>
@@ -67,26 +78,35 @@ export default function AdminOrders() {
         </div>
       )}
 
-      {!loading && orders.length === 0 && (
-        <p className="text-hops-muted text-center py-16">No hay pedidos{statusFilter ? ' con este estado' : ''}.</p>
+      {!loading && filtered.length === 0 && (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 rounded-full bg-hops-raised flex items-center justify-center mx-auto mb-4">
+            <InboxIcon size={28} className="text-hops-subtle" />
+          </div>
+          <p className="text-hops-muted">
+            {search ? `Sin resultados para "${search}"` : `No hay pedidos${statusFilter ? ' con este estado' : ''}.`}
+          </p>
+        </div>
       )}
 
-      {!loading && orders.length > 0 && (
+      {!loading && filtered.length > 0 && (
         <div className="space-y-3">
-          {orders.filter(o => !search ||
-            o.order_number.toLowerCase().includes(search.toLowerCase()) ||
-            (o.guest_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-            (o.guest_email ?? '').toLowerCase().includes(search.toLowerCase())
-          ).map(o => (
-            <div key={o.id} className="card border-l-2 border-transparent hover:border-l-hops-green hover:bg-hops-card/80 transition-all duration-150 group">
+          {filtered.map(o => (
+            <div
+              key={o.id}
+              className="card border-l-2 border-transparent hover:border-l-hops-green hover:bg-hops-raised/30 transition-all duration-150 group"
+            >
               <div className="flex flex-wrap items-center gap-3 justify-between">
                 {/* Número y fecha */}
                 <div>
-                  <Link to={`/admin/pedidos/${o.id}`} className="font-bold text-hops-green hover:text-hops-green-light transition-colors">
+                  <Link
+                    to={`/admin/pedidos/${o.id}`}
+                    className="font-bold text-hops-green hover:text-hops-green-light transition-colors font-display tracking-wide"
+                  >
                     {o.order_number}
                   </Link>
                   <p className="text-xs text-hops-muted mt-0.5">
-                    {formatDate(o.created_at.slice(0, 10))} · {o.delivery_type === 'delivery' ? '🚚 Delivery' : '🏠 Retiro'}
+                    {formatDate(o.created_at.slice(0, 10))} · {o.delivery_type === 'delivery' ? 'Delivery' : 'Retiro'}
                   </p>
                 </div>
 
@@ -96,8 +116,9 @@ export default function AdminOrders() {
                   {o.guest_phone && (
                     <a
                       href={`https://wa.me/${o.guest_phone.replace(/\D/g, '')}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="text-xs text-hops-green hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-hops-green hover:text-hops-green-light transition-colors"
                     >
                       WhatsApp →
                     </a>
@@ -110,7 +131,10 @@ export default function AdminOrders() {
                     {ORDER_STATUS_LABEL[o.status as OrderStatus]}
                   </Badge>
                   <span className="font-bold text-hops-gold">{formatARS(o.total)}</span>
-                  <Link to={`/admin/pedidos/${o.id}`} className="text-xs text-hops-muted hover:text-hops-white transition-colors">
+                  <Link
+                    to={`/admin/pedidos/${o.id}`}
+                    className="text-xs text-hops-muted hover:text-hops-white transition-colors"
+                  >
                     Ver →
                   </Link>
                 </div>

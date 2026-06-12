@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import ProductCard from '@/components/products/ProductCard'
 import Spinner from '@/components/ui/Spinner'
 import { useProducts } from '@/hooks/useProducts'
+import { useReveal } from '@/hooks/useReveal'
 
 const CATEGORIES = [
   { slug: 'lata',      label: 'Latas',       num: '01', desc: '473 cm³ · Todos los estilos' },
@@ -14,6 +15,11 @@ const CATEGORIES = [
 export default function Home() {
   const { products, loading } = useProducts()
   const featured = products.filter(p => p.category !== 'barril').slice(0, 4)
+
+  const cats     = useReveal()
+  const featured_ = useReveal()
+  const barrel   = useReveal(0.08)
+  const phil     = useReveal()
 
   return (
     <div className="overflow-x-hidden">
@@ -37,9 +43,7 @@ export default function Home() {
 
         {/* Logo flotante */}
         <div className="absolute top-1/2 right-0 md:right-8 -translate-y-1/2 pointer-events-none hidden md:block">
-          {/* Halo verde */}
           <div className="absolute inset-0 rounded-full bg-hops-green/25 blur-3xl scale-125" />
-          {/* Logo con máscara radial para que se disuelva en el fondo */}
           <img
             src="/logo.jpg"
             alt=""
@@ -78,7 +82,10 @@ export default function Home() {
       </section>
 
       {/* ── CATEGORÍAS ───────────────────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 md:px-16 pt-28 pb-20">
+      <section
+        ref={cats.ref as React.RefObject<HTMLElement>}
+        className={`max-w-6xl mx-auto px-6 md:px-16 pt-28 pb-20 transition-opacity duration-700 ${cats.visible ? 'reveal-up' : 'opacity-0'}`}
+      >
         <div className="flex items-end justify-between mb-12">
           <h2 className="section-title">Lo que<br />tenemos</h2>
           <Link to="/productos" className="text-xs font-bold uppercase tracking-[0.2em] text-hops-muted hover:text-hops-green transition-colors hidden md:flex items-center gap-2">
@@ -107,7 +114,10 @@ export default function Home() {
       </section>
 
       {/* ── DESTACADOS ───────────────────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 md:px-16 pb-20">
+      <section
+        ref={featured_.ref as React.RefObject<HTMLElement>}
+        className={`max-w-6xl mx-auto px-6 md:px-16 pb-20 transition-opacity duration-700 ${featured_.visible ? 'reveal-up' : 'opacity-0'}`}
+      >
         <div className="flex items-end justify-between mb-10">
           <h2 className="section-title">Destacados</h2>
           <Link to="/productos" className="text-xs font-bold uppercase tracking-[0.2em] text-hops-muted hover:text-hops-green transition-colors flex items-center gap-2">
@@ -128,7 +138,8 @@ export default function Home() {
 
       {/* ── BARRILES ─────────────────────────────────────────────────────── */}
       <section
-        className="relative py-28 px-6 md:px-16 overflow-hidden"
+        ref={barrel.ref as React.RefObject<HTMLElement>}
+        className={`relative py-28 px-6 md:px-16 overflow-hidden transition-opacity duration-700 ${barrel.visible ? 'reveal-up' : 'opacity-0'}`}
         style={{ clipPath: 'polygon(0 8%, 100% 0, 100% 92%, 0 100%)' }}
       >
         <div className="absolute inset-0 bg-hops-green" />
@@ -154,7 +165,10 @@ export default function Home() {
       </section>
 
       {/* ── FILOSOFÍA ────────────────────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 md:px-16 py-28">
+      <section
+        ref={phil.ref as React.RefObject<HTMLElement>}
+        className={`max-w-6xl mx-auto px-6 md:px-16 py-28 transition-opacity duration-700 ${phil.visible ? 'reveal-up' : 'opacity-0'}`}
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-hops-border">
           {[
             { num: '—', title: 'Artesanal', body: 'Producción propia en Patagonia Argentina. Ingredientes seleccionados, sin atajos.' },
