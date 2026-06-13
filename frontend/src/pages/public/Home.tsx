@@ -45,10 +45,10 @@ export default function Home() {
         <div className="absolute top-1/2 right-0 md:right-8 -translate-y-1/2 pointer-events-none hidden md:block">
           <div className="absolute inset-0 rounded-full bg-hops-green/25 blur-3xl scale-125" />
           <img
-            src="/logo.jpg"
+            src="/logo.png"
             alt=""
-            className="relative w-[420px] h-[420px] object-cover opacity-55"
-            style={{ maskImage: 'radial-gradient(ellipse 70% 70% at 50% 45%, black 35%, transparent 75%)' }}
+            className="relative w-[420px] h-[420px] object-contain opacity-60"
+            style={{ maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 45%, transparent 80%)' }}
           />
         </div>
 

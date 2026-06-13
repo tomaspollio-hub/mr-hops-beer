@@ -56,7 +56,7 @@ export default function Navbar() {
           className="flex items-center gap-2.5 font-display text-xl uppercase tracking-wider text-hops-green hover:text-hops-green-light transition-colors"
         >
           <img
-            src="/logo.jpg"
+            src="/logo.png"
             alt="Mr. Hops"
             className="w-9 h-9 rounded-full object-cover border-2 border-hops-green/30"
           />

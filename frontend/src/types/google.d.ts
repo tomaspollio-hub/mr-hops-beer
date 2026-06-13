@@ -7,7 +7,7 @@ interface Window {
           callback: (response: { credential: string }) => void
           auto_select?: boolean
         }) => void
-        prompt: () => void
+        prompt: (callback?: (notification: { isNotDisplayed: () => boolean; isSkippedMoment: () => boolean }) => void) => void
         renderButton: (element: HTMLElement, options: Record<string, unknown>) => void
       }
     }

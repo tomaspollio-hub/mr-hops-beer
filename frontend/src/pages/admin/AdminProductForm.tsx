@@ -147,6 +147,16 @@ export default function AdminProductForm() {
             className="hidden"
             onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
           />
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-xs text-hops-subtle">o URL:</span>
+            <input
+              type="text"
+              value={imageUrl}
+              onChange={e => { setImageUrl(e.target.value); setImagePreview(e.target.value) }}
+              className="input-field text-xs flex-1"
+              placeholder="/products/ipa-rapaz.jpg"
+            />
+          </div>
         </div>
 
         {/* Nombre */}

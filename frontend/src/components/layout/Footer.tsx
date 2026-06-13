@@ -71,7 +71,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <img src="/logo.jpg" alt="Mr. Hops" className="w-11 h-11 rounded-full object-cover border-2 border-hops-green/30" />
+              <img src="/logo.png" alt="Mr. Hops" className="w-11 h-11 rounded-full object-cover border-2 border-hops-green/30" />
               <p className="font-display text-xl text-hops-green uppercase tracking-wider">Mr. Hops Beer</p>
             </div>
             <p className="text-sm text-hops-muted mb-3 leading-relaxed">

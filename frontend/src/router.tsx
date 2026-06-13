@@ -32,6 +32,7 @@ const AdminProducts     = lazy(() => import('@/pages/admin/AdminProducts'))
 const AdminProductForm  = lazy(() => import('@/pages/admin/AdminProductForm'))
 const AdminStock        = lazy(() => import('@/pages/admin/AdminStock'))
 const AdminCustomers    = lazy(() => import('@/pages/admin/AdminCustomers'))
+const AdminSettings     = lazy(() => import('@/pages/admin/AdminSettings'))
 
 const Loading = () => (
   <div className="min-h-screen bg-hops-black flex items-center justify-center">
@@ -97,6 +98,7 @@ export const router = createBrowserRouter([
       { path: 'productos/:id/editar',        element: <AdminProductForm /> },
       { path: 'stock',                       element: <AdminStock /> },
       { path: 'clientes',                    element: <AdminCustomers /> },
+      { path: 'configuracion',               element: <AdminSettings /> },
     ],
   },
   {

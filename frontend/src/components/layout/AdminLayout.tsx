@@ -1,5 +1,5 @@
 import { Outlet, NavLink, Link, Navigate } from 'react-router-dom'
-import { LayoutDashboard, ShoppingBag, Calendar, Package, BarChart2, Users, Store, LogOut } from 'lucide-react'
+import { LayoutDashboard, ShoppingBag, Calendar, Package, BarChart2, Users, Store, LogOut, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import ToastContainer from '@/components/ui/Toast'
@@ -10,7 +10,8 @@ const adminLinks = [
   { to: '/admin/reservas',  label: 'Reservas',   icon: Calendar },
   { to: '/admin/productos', label: 'Productos',  icon: Package },
   { to: '/admin/stock',     label: 'Stock',      icon: BarChart2 },
-  { to: '/admin/clientes',  label: 'Clientes',   icon: Users },
+  { to: '/admin/clientes',       label: 'Clientes',       icon: Users },
+  { to: '/admin/configuracion',  label: 'Configuración',  icon: Settings },
 ]
 
 // Mobile nav: 5 items máximo — Stock removido (accesible desde desktop sidebar)
@@ -35,7 +36,7 @@ export default function AdminLayout() {
           to="/"
           className="flex items-center gap-2.5 px-4 py-5 border-b border-hops-border hover:bg-hops-raised transition-colors"
         >
-          <img src="/logo.jpg" alt="Mr. Hops" className="w-7 h-7 rounded-full object-cover border border-hops-green/30" />
+          <img src="/logo.png" alt="Mr. Hops" className="w-7 h-7 rounded-full object-cover border border-hops-green/30" />
           <span className="font-display text-base text-hops-green uppercase tracking-wider">Mr. Hops</span>
         </Link>
 
@@ -92,7 +93,7 @@ export default function AdminLayout() {
         {/* Mobile top bar */}
         <header className="md:hidden bg-hops-dark border-b border-hops-border px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="Mr. Hops" className="w-7 h-7 rounded-full object-cover border border-hops-green/30" />
+            <img src="/logo.png" alt="Mr. Hops" className="w-7 h-7 rounded-full object-cover border border-hops-green/30" />
             <span className="font-display text-hops-green uppercase tracking-wider text-sm">Admin</span>
           </div>
           <button

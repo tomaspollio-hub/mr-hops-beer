@@ -12,6 +12,7 @@ import adminOrdersRoute from './routes/admin/orders'
 import adminReservationsRoute from './routes/admin/reservations'
 import adminStockRoute from './routes/admin/stock'
 import adminCustomersRoute from './routes/admin/customers'
+import adminSettingsRoute from './routes/admin/settings'
 import paymentsRoute from './routes/payments'
 
 const app = new Hono<{ Bindings: Env }>()
@@ -41,6 +42,7 @@ app.route('/api/admin/orders', adminOrdersRoute)
 app.route('/api/admin/reservations', adminReservationsRoute)
 app.route('/api/admin/stock', adminStockRoute)
 app.route('/api/admin/customers', adminCustomersRoute)
+app.route('/api/admin/settings', adminSettingsRoute)
 
 // Dashboard admin
 app.get('/api/admin/dashboard', async c => {
